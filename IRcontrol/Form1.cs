@@ -16,6 +16,7 @@ namespace IRcontrol
     public partial class Form1 : Form
     {
         //я сделал
+        //я тоже сделал
         public Form1()
         {
             InitializeComponent();
