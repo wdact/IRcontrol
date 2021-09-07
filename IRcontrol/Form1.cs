@@ -21,21 +21,27 @@ namespace IRcontrol
         {
             InitializeComponent();
             FormClosed += Form1_FormClosed;
-            
+            port = new SerialPort();
+
             try
             {
-                port = new SerialPort("COM3");
-                port.RtsEnable = true;
-                port.DtrEnable = true;
-                port.DataReceived += Port_DataReceived;
-                port.Open();
+                string[] availablePorts = SerialPort.GetPortNames();
+                foreach (string port in availablePorts)
+                {
+                    comboBox1.Items.Add(port);
+                }
+                //comboBox1.SelectedIndex = 0;
+                //port.RtsEnable = true;
+                //port.DtrEnable = true;
+                //port.DataReceived += Port_DataReceived;
+                //port.Open();
 
                 
             }
             catch (Exception ee)
             {
                 MessageBox.Show("Оборудование не подключено!");
-                Close();
+                //Close();
             }
 
         }
@@ -51,6 +57,7 @@ namespace IRcontrol
         {
             var port = (SerialPort)sender;
             var data = port.ReadExisting();
+
             switch(data.Trim())
             {
                 case "Button1":
@@ -175,6 +182,22 @@ namespace IRcontrol
 
 
             }
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (port.IsOpen)
+            {
+                port.RtsEnable = false;
+                port.DtrEnable = false;
+                port.DataReceived -= Port_DataReceived;
+                port.Close();
+            }
+            port = new SerialPort(comboBox1.Items[comboBox1.SelectedIndex].ToString());
+            port.RtsEnable = true;
+            port.DtrEnable = true;
+            port.DataReceived += Port_DataReceived;
+            port.Open();
         }
     }
 }
