@@ -15,6 +15,7 @@ namespace IRcontrol
 {
     public partial class Form1 : Form
     {
+        //я сделал
         public Form1()
         {
             InitializeComponent();
@@ -28,7 +29,7 @@ namespace IRcontrol
                 port.DataReceived += Port_DataReceived;
                 port.Open();
 
-
+                
             }
             catch (Exception ee)
             {
