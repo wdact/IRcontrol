@@ -30,18 +30,25 @@ namespace IRcontrol
                 {
                     comboBox1.Items.Add(port);
                 }
-                //comboBox1.SelectedIndex = 0;
-                //port.RtsEnable = true;
-                //port.DtrEnable = true;
-                //port.DataReceived += Port_DataReceived;
-                //port.Open();
+                //File.ReadAllText("BASE.txt").Contains("portName");
 
-                
+                var allLines = File.ReadAllLines("BASE.txt").ToList();
+                String NamePort = allLines.Find(x => x.Contains("portName|"))?.Split('|').Last();
+                if (string.IsNullOrEmpty(NamePort)) return;
+                comboBox1.SelectedItem = NamePort;
+                comboBox1_SelectedIndexChanged(null, null);
+                    //comboBox1.SelectedIndex = 0;
+                    //port.RtsEnable = true;
+                    //port.DtrEnable = true;
+                    //port.DataReceived += Port_DataReceived;
+                    //port.Open();
+
+
             }
             catch (Exception ee)
             {
                 MessageBox.Show("Оборудование не подключено!");
-                //Close();
+                Close();
             }
 
         }
@@ -144,8 +151,10 @@ namespace IRcontrol
 
            var allLines = File.ReadAllLines("BASE.txt").ToList();
             allLines.RemoveAll(f => f.Contains(_lastChoosed + "|"));
+            allLines.RemoveAll(f => string.IsNullOrEmpty(f));
             allLines.Add(forWriteBase);
             File.WriteAllLines("BASE.txt", allLines);
+
 
         }
 
@@ -198,6 +207,19 @@ namespace IRcontrol
             port.DtrEnable = true;
             port.DataReceived += Port_DataReceived;
             port.Open();
+
+           if( File.ReadAllText("BASE.txt").Contains("portName"))
+            {
+                var allLines = File.ReadAllLines("BASE.txt").ToList();
+                allLines.RemoveAll(f => f.Contains("portName"));
+                allLines.RemoveAll(f => string.IsNullOrEmpty(f));
+                allLines.Add("portName|" + comboBox1.Items[comboBox1.SelectedIndex].ToString());
+                File.WriteAllLines("BASE.txt", allLines);
+            }
+            else
+            {
+                File.AppendAllText("BASE.txt","portName|" + comboBox1.Items[comboBox1.SelectedIndex].ToString()+Environment.NewLine);
+            }
         }
     }
 }
